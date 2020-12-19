@@ -5,6 +5,7 @@ export default {
     guide: 'Guide',
     permission: 'Permission',
     cmscategory: 'Category Manage',
+    cmscontent: 'Content Manage',
     pagePermission: 'Page Permission',
     rolePermission: 'Role Permission',
     directivePermission: 'Directive Permission',
@@ -98,6 +99,13 @@ export default {
   },
   cmscategory: {
     addCategory: 'Add Category',
+    edit: 'Edit',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    cancel: 'Cancel'
+  },
+  cmscontent: {
+    add: 'Add',
     edit: 'Edit',
     delete: 'Delete',
     confirm: 'Confirm',

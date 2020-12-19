@@ -5,6 +5,7 @@ export default {
     guide: '引导页',
     permission: '权限测试页',
     cmscategory: '栏目管理',
+    cmscontent: '内容管理',
     rolePermission: '角色权限',
     pagePermission: '页面权限',
     directivePermission: '指令权限',
@@ -98,6 +99,13 @@ export default {
   },
   cmscategory: {
     addCategory: '新增栏目',
+    edit: '编辑',
+    delete: '删除',
+    confirm: '确定',
+    cancel: '取消'
+  },
+  cmscontent: {
+    add: '新增内容',
     edit: '编辑',
     delete: '删除',
     confirm: '确定',

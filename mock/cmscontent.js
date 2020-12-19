@@ -127,7 +127,7 @@ module.exports = [
 
   // mock get all cates form server
   {
-    url: '/vue-element-admin/cate/list',
+    url: '/vue-element-admin/cmscontent/list',
     type: 'get',
     response: _ => {
       return {
@@ -142,7 +142,7 @@ module.exports = [
 
   // add cate
   {
-    url: '/vue-element-admin/cate/add',
+    url: '/vue-element-admin/cmscontent/add',
     type: 'post',
     response: {
       code: 20000,
@@ -154,7 +154,7 @@ module.exports = [
 
   // update cate
   {
-    url: '/vue-element-admin/cate/[A-Za-z0-9]',
+    url: '/vue-element-admin/cmscontent/[A-Za-z0-9]',
     type: 'put',
     response: {
       code: 20000,
@@ -166,7 +166,7 @@ module.exports = [
 
   // delete cate
   {
-    url: '/vue-element-admin/cate/[A-Za-z0-9]',
+    url: '/vue-element-admin/cmscontent/[A-Za-z0-9]',
     type: 'delete',
     response: {
       code: 20000,
