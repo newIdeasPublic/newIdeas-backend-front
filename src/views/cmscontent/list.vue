@@ -10,19 +10,24 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="内容编码" width="220">
+      <el-table-column align="center" label="内容标题" width="220">
         <template slot-scope="scope">
-          {{ scope.row.code }}
+          {{ scope.row.title }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="内容名称" width="220">
+      <el-table-column align="center" label="简介" width="220">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.shortContent }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="说明">
+      <el-table-column align="header-center" label="日期">
         <template slot-scope="scope">
-          {{ scope.row.description }}
+          {{ scope.row.updateTime }}
+        </template>
+      </el-table-column>
+      <el-table-column align="header-center" label="状态">
+        <template slot-scope="scope">
+          {{ scope.row.status }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -41,18 +46,18 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑':'新增内容'">
       <el-form :model="cate" label-width="80px" label-position="left">
-        <el-form-item label="内容编码">
-          <el-input v-model="cate.code" placeholder="内容编码" />
+        <el-form-item label="内容标题">
+          <el-input v-model="cate.title" placeholder="内容标题" />
         </el-form-item>
-        <el-form-item label="内容名称">
-          <el-input v-model="cate.name" placeholder="内容名称" />
+        <el-form-item label="简介">
+          <el-input v-model="cate.shortContent" placeholder="简介" />
         </el-form-item>
-        <el-form-item label="说明">
+        <el-form-item label="内容">
           <el-input
-            v-model="cate.description"
+            v-model="cate.content"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="描述说明"
+            placeholder="内容"
           />
         </el-form-item>
       </el-form>
