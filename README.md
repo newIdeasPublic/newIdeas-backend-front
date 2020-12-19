@@ -3,6 +3,7 @@
 ## 环境
 
 git
+
 node v8.17.0
 
 ## 开发
@@ -12,7 +13,7 @@ node v8.17.0
 git clone https://github.com/newIdeasPublic/newIdeas-backend-front.git
 
 # 进入项目目录
-cd vue-element-admin
+cd ewIdeas-backend-front
 
 # 安装依赖
 npm install
