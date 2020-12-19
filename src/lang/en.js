@@ -4,6 +4,7 @@ export default {
     documentation: 'Documentation',
     guide: 'Guide',
     permission: 'Permission',
+    cmscategory: 'Category Manage',
     pagePermission: 'Page Permission',
     rolePermission: 'Role Permission',
     directivePermission: 'Directive Permission',
@@ -91,6 +92,13 @@ export default {
     roles: 'Your roles',
     switchRoles: 'Switch roles',
     tips: 'In some cases, using v-permission will have no effect. For example: Element-UI  el-tab or el-table-column and other scenes that dynamically render dom. You can only do this with v-if.',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    cancel: 'Cancel'
+  },
+  cmscategory: {
+    addCategory: 'Add Category',
+    edit: 'Edit',
     delete: 'Delete',
     confirm: 'Confirm',
     cancel: 'Cancel'

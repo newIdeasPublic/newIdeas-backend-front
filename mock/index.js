@@ -3,12 +3,14 @@ const { param2Obj } = require('./utils')
 
 const user = require('./user')
 const role = require('./role')
+const cate = require('./cate')
 const article = require('./article')
 const search = require('./remote-search')
 
 const mocks = [
   ...user,
   ...role,
+  ...cate,
   ...article,
   ...search
 ]

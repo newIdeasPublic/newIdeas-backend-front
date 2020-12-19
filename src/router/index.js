@@ -184,6 +184,25 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    path: '/cmscategory',
+    component: Layout,
+    redirect: '/cmscategory/list',
+    name: 'cmscategory',
+    meta: {
+      title: 'cmscategory',
+      icon: 'category'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/cmscategory/list'),
+        name: 'cmscategory',
+        meta: { title: 'cmscategory', icon: 'list' }
+      }
+    ]
+  },
+
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
