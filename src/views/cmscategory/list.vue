@@ -71,7 +71,7 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { fetchList, addCate, deleteCate, updateCate } from '@/api/category'
+import { fetchList, addCate, deleteCate, updateCate } from '@/api/cmscategory'
 import i18n from '@/lang'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -220,7 +220,7 @@ export default {
       })
         .then(async() => {
           await deleteCate(row.id)
-          this.catesList.splice($index, 1)
+          this.list.splice($index, 1)
           this.$message({
             type: 'success',
             message: 'Delete succed!'
@@ -233,16 +233,16 @@ export default {
 
       if (isEdit) {
         await updateCate(this.cate.id, this.cate)
-        for (let index = 0; index < this.catesList.length; index++) {
-          if (this.catesList[index].id === this.cate.id) {
-            this.catesList.splice(index, 1, Object.assign({}, this.cate))
+        for (let index = 0; index < this.list.length; index++) {
+          if (this.list[index].id === this.cate.id) {
+            this.list.splice(index, 1, Object.assign({}, this.cate))
             break
           }
         }
       } else {
         const { data } = await addCate(this.cate)
         this.cate.id = data.id
-        this.catesList.push(this.cate)
+        this.list.push(this.cate)
       }
 
       const { description, code, name } = this.cate
