@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/cmscontent/list',
+    url: '/api/cmscontent/listPageByCode',
     method: 'get',
     params: query
   })
@@ -10,23 +10,30 @@ export function fetchList(query) {
 
 export function addContent(data) {
   return request({
-    url: '/vue-element-admin/cmscontent/add',
+    url: '/api/cmscontent/insert',
     method: 'post',
     data
   })
 }
 
-export function updateContent(id, data) {
+export function updateContent(data) {
   return request({
-    url: `/vue-element-admin/cmscontent/${id}`,
-    method: 'put',
+    url: `/api/cmscontent/update`,
+    method: 'post',
     data
   })
 }
 
 export function deleteContent(id) {
   return request({
-    url: `/vue-element-admin/cmscontent/${id}`,
-    method: 'delete'
+    url: `/api/cmscontent/delete/${id}`,
+    method: 'post'
+  })
+}
+
+export function get(id) {
+  return request({
+    url: `/api/cmscontent/get/${id}`,
+    method: 'get'
   })
 }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/cmscategory/list',
+    url: '/api/cmscategory/list',
     method: 'get',
     params: query
   })
@@ -10,23 +10,30 @@ export function fetchList(query) {
 
 export function addCate(data) {
   return request({
-    url: '/vue-element-admin/cmscategory/add',
+    url: '/api/cmscategory/insert',
     method: 'post',
     data
   })
 }
 
-export function updateCate(id, data) {
+export function updateCate(data) {
   return request({
-    url: `/vue-element-admin/cmscategory/${id}`,
-    method: 'put',
+    url: `/api/cmscategory/update`,
+    method: 'post',
     data
   })
 }
 
 export function deleteCate(id) {
   return request({
-    url: `/vue-element-admin/cmscategory/${id}`,
-    method: 'delete'
+    url: `/api/cmscategory/delete/${id}`,
+    method: 'post'
+  })
+}
+
+export function get(id) {
+  return request({
+    url: `/api/cmscategory/get/${id}`,
+    method: 'get'
   })
 }

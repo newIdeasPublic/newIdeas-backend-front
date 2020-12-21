@@ -1,7 +1,7 @@
 const Mock = require('mockjs')
 
 const data = {
-  'totalCount': 3,
+  'totalCount': 15,
   'pageSize': 10,
   'totalPage': 1,
   'currPage': 0,
@@ -133,22 +133,19 @@ module.exports = [
 
   // mock get all cates form server
   {
-    url: '/vue-element-admin/cmscategory/list',
+    url: '/api/cmscategory/list',
     type: 'get',
     response: _ => {
       return {
         code: 20000,
-        data: {
-          total: data.totalCount,
-          items: data.list
-        }
+        data: data
       }
     }
   },
 
   // add cate
   {
-    url: '/vue-element-admin/cmscategory/add',
+    url: '/api/cmscategory/insert',
     type: 'post',
     response: {
       code: 20000,
@@ -160,8 +157,8 @@ module.exports = [
 
   // update cate
   {
-    url: '/vue-element-admin/cmscategory/[A-Za-z0-9]',
-    type: 'put',
+    url: '/api/cmscategory/update',
+    type: 'post',
     response: {
       code: 20000,
       data: {
@@ -172,13 +169,23 @@ module.exports = [
 
   // delete cate
   {
-    url: '/vue-element-admin/cmscategory/[A-Za-z0-9]',
-    type: 'delete',
+    url: '/api/cmscategory/delete/[A-Za-z0-9]',
+    type: 'post',
     response: {
       code: 20000,
       data: {
         status: 'success'
       }
+    }
+  },
+
+  // get cate
+  {
+    url: '/api/cmscategory/get/[A-Za-z0-9]',
+    type: 'get',
+    response: {
+      code: 20000,
+      data: data.list[0]
     }
   }
 ]

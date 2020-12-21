@@ -132,8 +132,8 @@ export default {
     async getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+        this.list = response.data.list
+        this.total = response.data.totalCount
 
         // Just to simulate the time of the request
         setTimeout(() => {

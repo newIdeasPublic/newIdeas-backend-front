@@ -37,24 +37,21 @@ const data = {
 
 module.exports = [
 
-  // mock get all cates form server
+  // mock get content by code form server
   {
-    url: '/vue-element-admin/cmscontent/list',
+    url: '/api/cmscontent/listPageByCode',
     type: 'get',
     response: _ => {
       return {
         code: 20000,
-        data: {
-          total: data.totalCount,
-          items: data.list
-        }
+        data: data
       }
     }
   },
 
-  // add cate
+  // add content
   {
-    url: '/vue-element-admin/cmscontent/add',
+    url: '/api/cmscontent/insert',
     type: 'post',
     response: {
       code: 20000,
@@ -64,10 +61,10 @@ module.exports = [
     }
   },
 
-  // update cate
+  // update content
   {
-    url: '/vue-element-admin/cmscontent/[A-Za-z0-9]',
-    type: 'put',
+    url: '/api/cmscontent/update',
+    type: 'post',
     response: {
       code: 20000,
       data: {
@@ -76,15 +73,25 @@ module.exports = [
     }
   },
 
-  // delete cate
+  // delete content
   {
-    url: '/vue-element-admin/cmscontent/[A-Za-z0-9]',
-    type: 'delete',
+    url: '/api/cmscontent/delete/[A-Za-z0-9]',
+    type: 'post',
     response: {
       code: 20000,
       data: {
         status: 'success'
       }
+    }
+  },
+
+  // get content
+  {
+    url: '/api/cmscontent/get/[A-Za-z0-9]',
+    type: 'get',
+    response: {
+      code: 20000,
+      data: data.list[0]
     }
   }
 ]
