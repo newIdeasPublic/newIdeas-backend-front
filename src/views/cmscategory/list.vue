@@ -30,6 +30,11 @@
           <el-button type="primary" size="small" @click="handleEdit(scope)">
             {{ $t('cmscategory.edit') }}
           </el-button>
+          <router-link :to="{name: 'cmscontentlist', params: { code: scope.row.code, name: scope.row.name, id:scope.row.id }}">
+            <el-button type="primary" size="small" @click="handleContent(scope)">
+              管理内容
+            </el-button>
+          </router-link>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
             {{ $t('cmscategory.delete') }}
           </el-button>
@@ -100,11 +105,8 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        size: 10,
+        limit: 10
       },
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -132,6 +134,7 @@ export default {
     async getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
+        console.log(response.data.totalCount)
         this.list = response.data.list
         this.total = response.data.totalCount
 
@@ -212,6 +215,9 @@ export default {
         this.checkStrictly = false
       })
     },
+    handleContent(scope) {
+      this.$router.push({ name: 'cmscontentlist', params: { code: scope.row.code, name: scope.row.name, id: scope.row.id }})
+    },
     handleDelete({ $index, row }) {
       this.$confirm('您确定要删除此分类吗？', '提示', {
         confirmButtonText: '确定',
@@ -225,6 +231,7 @@ export default {
             type: 'success',
             message: 'Delete succed!'
           })
+          this.total -= 1
         })
         .catch(err => { console.error(err) })
     },
@@ -232,7 +239,7 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       if (isEdit) {
-        await updateCate(this.cate.id, this.cate)
+        await updateCate(this.cate)
         for (let index = 0; index < this.list.length; index++) {
           if (this.list[index].id === this.cate.id) {
             this.list.splice(index, 1, Object.assign({}, this.cate))
@@ -243,6 +250,7 @@ export default {
         const { data } = await addCate(this.cate)
         this.cate.id = data.id
         this.list.push(this.cate)
+        this.total += 1
       }
 
       const { description, code, name } = this.cate
