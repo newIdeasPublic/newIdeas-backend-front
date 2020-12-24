@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    当前栏目：{{ $route.params.name }}
     <el-button type="primary" @click="handleAddContent">
       {{ $t('cmscontent.add') }}
     </el-button>
@@ -103,13 +104,12 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      categoryId: 0,
       listQuery: {
         page: 1,
         limit: 10,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        size: 10,
+        code: ''
       },
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -136,6 +136,10 @@ export default {
     }, */
     async getList() {
       this.listLoading = true
+      this.listQuery.code = this.$route.params.code
+      this.categoryId = this.$route.params.id
+      console.log(this.listQuery.code)
+      console.log(this.categoryId)
       fetchList(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.totalCount
@@ -230,6 +234,7 @@ export default {
             type: 'success',
             message: 'Delete succed!'
           })
+          this.total -= 1
         })
         .catch(err => { console.error(err) })
     },
@@ -237,7 +242,7 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       if (isEdit) {
-        await updateContent(this.cate.id, this.cate)
+        await updateContent(this.cate)
         for (let index = 0; index < this.list.length; index++) {
           if (this.list[index].id === this.cate.id) {
             this.list.splice(index, 1, Object.assign({}, this.cate))
@@ -245,9 +250,12 @@ export default {
           }
         }
       } else {
+        this.cate.categoryId = this.categoryId
+        console.log(this.cate)
         const { data } = await addContent(this.cate)
         this.cate.id = data.id
         this.list.push(this.cate)
+        this.total += 1
       }
 
       const { description, code, name } = this.cate
