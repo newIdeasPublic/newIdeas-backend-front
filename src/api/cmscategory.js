@@ -12,6 +12,9 @@ export function addCate(data) {
   return request({
     url: '/api/cmscategory/insert',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     data
   })
 }
@@ -20,6 +23,9 @@ export function updateCate(data) {
   return request({
     url: `/api/cmscategory/update`,
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     data
   })
 }
