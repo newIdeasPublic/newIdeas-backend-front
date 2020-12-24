@@ -164,8 +164,10 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          // console.log('dispatch')
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              // console.log('userInfo')
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
