@@ -197,7 +197,7 @@ export const asyncRoutes = [
       {
         path: 'list',
         component: () => import('@/views/cmscategory/list'),
-        name: 'cmscategory',
+        name: 'cmscategorylist',
         meta: { title: 'cmscategory', icon: 'list' }
       }
     ]
@@ -216,7 +216,7 @@ export const asyncRoutes = [
       {
         path: 'list',
         component: () => import('@/views/cmscontent/list'),
-        name: 'cmscontent',
+        name: 'cmscontentlist',
         meta: { title: 'cmscontent', icon: 'list' }
       }
     ]
