@@ -43,7 +43,7 @@ module.exports = [
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: data
       }
     }
@@ -54,7 +54,7 @@ module.exports = [
     url: '/api/cmscontent/insert',
     type: 'post',
     response: {
-      code: 20000,
+      code: 200,
       data: {
         id: Mock.mock('@integer(300, 5000)')
       }
@@ -66,7 +66,7 @@ module.exports = [
     url: '/api/cmscontent/update',
     type: 'post',
     response: {
-      code: 20000,
+      code: 200,
       data: {
         status: 'success'
       }
@@ -78,7 +78,7 @@ module.exports = [
     url: '/api/cmscontent/delete/[A-Za-z0-9]',
     type: 'post',
     response: {
-      code: 20000,
+      code: 200,
       data: {
         status: 'success'
       }
@@ -90,7 +90,7 @@ module.exports = [
     url: '/api/cmscontent/get/[A-Za-z0-9]',
     type: 'get',
     response: {
-      code: 20000,
+      code: 200,
       data: data.list[0]
     }
   }
