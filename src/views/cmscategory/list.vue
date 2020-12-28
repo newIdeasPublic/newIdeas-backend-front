@@ -5,17 +5,17 @@
     </el-button>
 
     <el-table :data="list" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="栏目ID" width="220">
+      <el-table-column align="center" label="栏目ID" width="120">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="栏目编码" width="220">
+      <el-table-column align="center" label="栏目编码" width="200">
         <template slot-scope="scope">
           {{ scope.row.code }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="栏目名称" width="220">
+      <el-table-column align="center" label="栏目名称" width="200">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
