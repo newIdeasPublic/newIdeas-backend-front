@@ -210,9 +210,22 @@ export const asyncRoutes = [
     name: 'cmscontent',
     meta: {
       title: 'cmscontent',
-      icon: 'content'
+      icon: 'list'
     },
     children: [
+      {
+        path: 'create',
+        component: () => import('@/views/cmscontent/create'),
+        name: 'cmscontentcreate',
+        meta: { title: 'cmscontentcreate', icon: 'edit' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/cmscontent/edit'),
+        name: 'cmscontentEdit',
+        meta: { title: 'cmscontentEdit', noCache: true, activeMenu: '/cmscontent/list' },
+        hidden: true
+      },
       {
         path: 'list',
         component: () => import('@/views/cmscontent/list'),

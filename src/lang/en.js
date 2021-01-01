@@ -6,6 +6,8 @@ export default {
     permission: 'Permission',
     cmscategory: 'Category Manage',
     cmscontent: 'Content Manage',
+    cmscontentcreate: 'Create Content',
+    cmscontentedit: 'Edit Content',
     pagePermission: 'Page Permission',
     rolePermission: 'Role Permission',
     directivePermission: 'Directive Permission',
@@ -109,7 +111,13 @@ export default {
     edit: 'Edit',
     delete: 'Delete',
     confirm: 'Confirm',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    title: 'Title',
+    draft: 'Draft',
+    publish: 'Publish',
+    author: 'Author',
+    publishTime: 'Publish Time',
+    summary: 'Summary'
   },
   guide: {
     description: 'The guide page is useful for some people who entered the project for the first time. You can briefly introduce the features of the project. Demo is based on ',

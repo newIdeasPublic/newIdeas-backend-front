@@ -6,6 +6,8 @@ export default {
     permission: '权限测试页',
     cmscategory: '栏目管理',
     cmscontent: '内容管理',
+    cmscontentcreate: '新增内容',
+    cmscontentedit: '编辑内容',
     rolePermission: '角色权限',
     pagePermission: '页面权限',
     directivePermission: '指令权限',
@@ -109,7 +111,13 @@ export default {
     edit: '编辑',
     delete: '删除',
     confirm: '确定',
-    cancel: '取消'
+    cancel: '取消',
+    title: '标题',
+    draft: '存草稿',
+    publish: '发布',
+    author: '作者',
+    publishTime: '发布时间',
+    summary: '简介'
   },
   guide: {
     description: '引导页对于一些第一次进入项目的人很有用，你可以简单介绍下项目的功能。本 Demo 是基于',
