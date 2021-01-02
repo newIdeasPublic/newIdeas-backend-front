@@ -27,7 +27,7 @@ npm run dev
 
 浏览器访问 http://localhost:9527
 
-如果希望在开发环境中使用服务器端接口，请在 vue.config.js 中的 devServer 节配置 proxy。
+如果希望在开发环境中使用服务器端接口，请在 vue.config.js 中的 devServer 节配置 proxy；开发环境对 API 的调用会添加 /dev-api 前缀，配置代理时需要注意处理。
 
 
 ## 发布
