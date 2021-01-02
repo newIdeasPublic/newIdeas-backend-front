@@ -27,6 +27,9 @@ npm run dev
 
 浏览器访问 http://localhost:9527
 
+如果希望在开发环境中使用服务器端接口，请在 vue.config.js 中的 devServer 节配置 proxy。
+
+
 ## 发布
 
 ```bash
@@ -36,3 +39,4 @@ npm run build:stage
 # 构建生产环境
 npm run build:prod
 ```
+构建完成后为静态文件，可以使用Nginx来发布，也可以放在后端服务的静态目录中；对 API 的调用会添加 /prod-api 前缀，用 Nginx 发布时需要为后端API接口配置代理。
