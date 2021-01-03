@@ -48,6 +48,27 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-form-item prop="code">
+        <el-col :span="2">
+          <span class="svg-container">
+            <i class="el-icon-picture" />
+          </span>
+        </el-col>
+        <el-col :span="14">
+          <el-input
+            ref="code"
+            v-model="loginForm.code"
+            name="code"
+            type="text"
+            tabindex="1"
+            autocomplete="off"
+          />
+        </el-col>
+        <el-col :span="8">
+          <img id="imgIdentifyingCode" :src="captchaUrl" style="height:40px; width: 100px; cursor: pointer; vertical-align: -webkit-baseline-middle;" alt="点击更换" title="点击更换" @click="getIdentifyingCode(true)">
+        </el-col>
+      </el-form-item>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
         {{ $t('login.logIn') }}
       </el-button>
@@ -81,7 +102,7 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+// import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 
@@ -90,15 +111,22 @@ export default {
   components: { LangSelect, SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (value.length < 5) { // !validUsername(value)
+        callback(new Error('The Username can not be less than 5 digits')) // Please enter the correct user name
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 5) {
+        callback(new Error('The password can not be less than 5 digits'))
+      } else {
+        callback()
+      }
+    }
+    const validateCode = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('The Verify Code can not be less than 4 digits'))
       } else {
         callback()
       }
@@ -106,11 +134,16 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: '111111',
+        code: '',
+        mobile: '',
+        uuid: Math.random()
       },
+      captchaUrl: '',
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -134,7 +167,9 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
+    this.getIdentifyingCode(true)
   },
+
   mounted() {
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
@@ -146,6 +181,17 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    getIdentifyingCode(bRefresh) {
+      let identifyCodeSrc = 'http://xslgy.zxl78585.com/prod-api/admin/login/captcha.jpg?uuid='
+      if (bRefresh) {
+        this.loginForm.uuid = Math.random()
+        identifyCodeSrc = 'http://xslgy.zxl78585.com/prod-api/admin/login/captcha.jpg?uuid=' + this.loginForm.uuid
+      }
+      // const objs = document.getElementById('imgIdentifyingCode')
+      // objs.src = identifyCodeSrc
+      this.captchaUrl = identifyCodeSrc
+      console.log(this.captchaUrl)
+    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')

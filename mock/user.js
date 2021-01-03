@@ -25,7 +25,7 @@ const users = {
 
 module.exports = [
   // user login
-  {
+  /* {
     url: '/api/user/login',
     type: 'post',
     response: config => {
@@ -45,7 +45,7 @@ module.exports = [
         data: token
       }
     }
-  },
+  }, */
 
   // get user info
   {
