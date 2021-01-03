@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: '管理登录_新思路公益',
 
   /**
    * @type {boolean} true | false
