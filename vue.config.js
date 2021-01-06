@@ -36,9 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    /* proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
+    proxy: {
       [process.env.VUE_APP_BASE_API]: {
         target: `http://xslgy.zxl78585.com`,
         changeOrigin: true,
@@ -46,8 +44,8 @@ module.exports = {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    }, */
-    proxy: `http://xslgy.zxl78585.com/`,
+    },
+    // proxy: `http://xslgy.zxl78585.com/`,
     after: require('./mock/mock-server.js')
     // before: require('./mock/mock-server.js')
   },
