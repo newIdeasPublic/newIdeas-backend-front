@@ -182,10 +182,10 @@ export default {
   },
   methods: {
     getIdentifyingCode(bRefresh) {
-      let identifyCodeSrc = 'http://xslgy.zxl78585.com/prod-api/admin/login/captcha.jpg?uuid='
+      let identifyCodeSrc = process.env.VUE_APP_BASE_API + '/admin/login/captcha.jpg?uuid='
       if (bRefresh) {
         this.loginForm.uuid = Math.random()
-        identifyCodeSrc = 'http://xslgy.zxl78585.com/prod-api/admin/login/captcha.jpg?uuid=' + this.loginForm.uuid
+        identifyCodeSrc = process.env.VUE_APP_BASE_API + '/admin/login/captcha.jpg?uuid=' + this.loginForm.uuid
       }
       // const objs = document.getElementById('imgIdentifyingCode')
       // objs.src = identifyCodeSrc
