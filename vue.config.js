@@ -46,7 +46,7 @@ module.exports = {
       }
     },
     // proxy: `http://xslgy.zxl78585.com/`,
-    after: require('./mock/mock-server.js')
+    // after: require('./mock/mock-server.js')
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
