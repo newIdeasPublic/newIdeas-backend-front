@@ -43,3 +43,19 @@ export function get(id) {
     method: 'get'
   })
 }
+
+export function isShow(data) {
+  return request({
+    url: `/api/cmscategory/isShow`,
+    method: 'post',
+    data
+  })
+}
+
+export function fetchChild(parentId) {
+  return request({
+    url: `/api/cmscategory/getByParentId/${parentId}`,
+    method: 'get'
+  })
+}
+

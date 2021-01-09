@@ -5,12 +5,18 @@
     </el-button>
 
     <el-table :data="list" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="栏目ID" width="120">
+      <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.id }}
+          <template v-if="scope.row.parentId === 0">
+            <el-button icon="el-icon-plus" size="mini" circle @click="handleExpend(scope.row, $event)" />
+          </template>
+          <template v-else>
+            <el-button icon="el-icon-minus" size="mini" circle />
+          </template>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="栏目编码" width="200">
+      <el-table-column align="center" label="栏目编码" width="150">
         <template slot-scope="scope">
           {{ scope.row.code }}
         </template>
@@ -20,9 +26,21 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="说明">
+      <el-table-column align="header-center" label="备注">
         <template slot-scope="scope">
           {{ scope.row.remark }}
+        </template>
+      </el-table-column>
+      <el-table-column align="header-center" label="显示">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isShow"
+            active-color="#13ce66"
+            inactive-color="#E3E3E3"
+            :active-value="1"
+            :inactive-value="0"
+            @change="changeStatus($event, scope.row)"
+          />
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -30,11 +48,14 @@
           <el-button type="primary" size="small" @click="handleEdit(scope)">
             {{ $t('cmscategory.edit') }}
           </el-button>
-          <router-link :to="{name: 'cmscontentlist', params: { code: scope.row.code, name: scope.row.name, id:scope.row.id }}">
+          <!-- <router-link :to="{name: 'cmscontentlist', params: { code: scope.row.code, name: scope.row.name, id:scope.row.id }}">
             <el-button type="primary" size="small" @click="handleContent(scope)">
               管理内容
             </el-button>
-          </router-link>
+          </router-link> -->
+          <el-button type="primary" @click="handleAddCate(scope.row)">
+            {{ $t('cmscategory.addCategory') }}
+          </el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
             {{ $t('cmscategory.delete') }}
           </el-button>
@@ -46,18 +67,33 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑':'新增栏目'">
       <el-form :model="cate" label-width="80px" label-position="left">
+        <el-form-item label="上级栏目">
+          <el-input v-model="cate.parentName" placeholder="无" :disabled="true" />
+        </el-form-item>
         <el-form-item label="栏目编码">
           <el-input v-model="cate.code" placeholder="栏目编码" />
         </el-form-item>
         <el-form-item label="栏目名称">
           <el-input v-model="cate.name" placeholder="栏目名称" />
         </el-form-item>
-        <el-form-item label="说明">
+        <el-form-item label="备注">
           <el-input
             v-model="cate.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="描述说明"
+            placeholder="备注"
+          />
+        </el-form-item>
+        <el-form-item label="序号">
+          <el-input v-model="cate.orderNo" placeholder="序号" />
+        </el-form-item>
+        <el-form-item label="显示">
+          <el-switch
+            v-model="cate.isShow"
+            active-color="#13ce66"
+            inactive-color="#E3E3E3"
+            :active-value="1"
+            :inactive-value="0"
           />
         </el-form-item>
       </el-form>
@@ -76,13 +112,16 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { fetchList, addCate, deleteCate, updateCate } from '@/api/cmscategory'
+import { fetchList, addCate, deleteCate, updateCate, isShow, fetchChild } from '@/api/cmscategory'
 import i18n from '@/lang'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const defaultCate = {
   code: '',
   name: '',
+  imgUrl: '',
+  isShow: 1,
+  orderNo: 0,
   remark: ''
 }
 
@@ -195,8 +234,45 @@ export default {
       })
       return data
     },
-    handleAddCate() {
+    async changeStatus(val, row) {
+      await isShow({
+        'id': row.id,
+        'isShow': val
+      })
+    },
+    async handleExpend(row, event) {
+      this.listLoading = true
+      fetchChild(row.id).then(response => {
+        // console.log(event)
+        row.parentId = -1
+        if (response.data.length === 0 || !response.data.list) {
+          return
+        }
+        var idx = 0
+        for (var i = 0; i < this.list.length; i++) {
+          idx++
+          if (this.list[i].id === row.id) {
+            break
+          }
+        }
+        response.data.list.unshift(idx, 0)
+        Array.prototype.splice.apply(this.list, response.data.list)
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+    },
+    handleAddCate(row) {
       this.cate = Object.assign({}, defaultCate)
+      if (row) {
+        this.cate.parentId = row.id
+        this.cate.parentName = row.name
+      } else {
+        this.cate.parentId = undefined
+        this.cate.parentName = ''
+      }
       if (this.$refs.tree) {
         this.$refs.tree.setCheckedNodes([])
       }
@@ -209,10 +285,12 @@ export default {
       this.checkStrictly = true
       this.cate = deepClone(scope.row)
       this.$nextTick(() => {
-        const routes = this.generateRoutes(this.cate.routes)
-        this.$refs.tree.setCheckedNodes(this.generateArr(routes))
-        // set checked state of a node not affects its father and child nodes
-        this.checkStrictly = false
+        if (this.cate.routes) {
+          const routes = this.generateRoutes(this.routes)
+          this.$refs.tree.setCheckedNodes(this.generateArr(routes))
+          // set checked state of a node not affects its father and child nodes
+          this.checkStrictly = false
+        }
       })
     },
     handleContent(scope) {
