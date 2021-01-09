@@ -22,7 +22,7 @@
       </el-table-column>
       <el-table-column align="header-center" label="说明">
         <template slot-scope="scope">
-          {{ scope.row.description }}
+          {{ scope.row.remark }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="说明">
           <el-input
-            v-model="cate.description"
+            v-model="cate.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
             placeholder="描述说明"
@@ -83,7 +83,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 const defaultCate = {
   code: '',
   name: '',
-  description: ''
+  remark: ''
 }
 
 export default {
@@ -253,7 +253,7 @@ export default {
         this.total += 1
       }
 
-      const { description, code, name } = this.cate
+      const { remark, code, name } = this.cate
       this.dialogVisible = false
       this.$notify({
         title: 'Success',
@@ -261,7 +261,7 @@ export default {
         message: `
             <div>Cate Code: ${code}</div>
             <div>Cate Name: ${name}</div>
-            <div>Description: ${description}</div>
+            <div>Remark: ${remark}</div>
           `,
         type: 'success'
       })
