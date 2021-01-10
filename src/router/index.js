@@ -183,7 +183,25 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  // 管理员帐号列表
+  {
+    path: '/administratorAccount',
+    component: Layout,
+    redirect: '/administratorAccount/list',
+    name: 'administratorAccount',
+    meta: {
+      title: 'administratorAccount',
+      icon: 'category'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/administratorAccount/list'),
+        name: 'administratorAccountlist',
+        meta: { title: 'administratorAccount', icon: 'list' }
+      }
+    ]
+  },
   {
     path: '/cmscategory',
     component: Layout,
