@@ -4,16 +4,16 @@
       {{ $t('cmscategory.addCategory') }}
     </el-button>
 
-    <el-table :data="list" style="width: 100%;margin-top:30px;" border>
+    <el-table :data="list" style="width: 100%;margin-top:30px;" :row-style="rowStyle" row-key="id" lazy border :load="loadChild" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.id }}
-          <template v-if="scope.row.parentId === 0">
-            <el-button icon="el-icon-plus" size="mini" circle @click="handleExpend(scope.row, $event)" />
+          <!-- <template v-if="scope.row.parentId === 0">
+            <el-button icon="el-icon-caret-right" size="mini" circle @click="handleExpend(scope.row, $event)" />
           </template>
           <template v-else>
-            <el-button icon="el-icon-minus" size="mini" circle />
-          </template>
+            <el-button icon="el-icon-caret-bottom" size="mini" circle @click="handleExpend(scope.row, $event)" />
+          </template> -->
         </template>
       </el-table-column>
       <el-table-column align="center" label="栏目编码" width="150">
@@ -53,9 +53,11 @@
               管理内容
             </el-button>
           </router-link> -->
-          <el-button type="primary" @click="handleAddCate(scope.row)">
-            {{ $t('cmscategory.addCategory') }}
-          </el-button>
+          <template v-if="scope.row.parentId === 0">
+            <el-button type="primary" @click="handleAddCate(scope.row)">
+              {{ $t('cmscategory.addCategory') }}
+            </el-button>
+          </template>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
             {{ $t('cmscategory.delete') }}
           </el-button>
@@ -63,7 +65,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑':'新增栏目'">
       <el-form :model="cate" label-width="80px" label-position="left">
@@ -112,9 +114,9 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { fetchList, addCate, deleteCate, updateCate, isShow, fetchChild } from '@/api/cmscategory'
+import { addCate, deleteCate, updateCate, isShow, fetchChild } from '@/api/cmscategory'
 import i18n from '@/lang'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const defaultCate = {
   code: '',
@@ -126,7 +128,7 @@ const defaultCate = {
 }
 
 export default {
-  components: { Pagination },
+  // components: { Pagination },
   data() {
     return {
       cate: Object.assign({}, defaultCate),
@@ -139,7 +141,7 @@ export default {
         label: 'title'
       },
       tableKey: 0,
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -172,16 +174,42 @@ export default {
     }, */
     async getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        console.log(response.data.totalCount)
-        this.list = response.data.list
-        this.total = response.data.totalCount
+      fetchChild(0).then(response => {
+        // console.log(response.data.length)
+        this.list = response.data
+        for (var i = 0; i < this.list.length; i++) {
+          this.list[i].hasChildren = true
+        }
+        this.total = response.data.length
 
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
       })
+    },
+    async loadChild(tree, treeNode, resolve) {
+      // console.log(tree)
+      // console.log(treeNode)
+      this.listLoading = true
+      fetchChild(tree.id).then(response => {
+        // console.log(response.data.length)
+        tree.children = response.data
+        treeNode.children = response.data
+        resolve(response.data)
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+    },
+    rowStyle({ row }) {
+      // // console.log(row)
+      if (row.hasChildren) {
+        return { 'background-color': '#F6F6F6' }
+      }
+      return {}
     },
     i18n(routes) {
       const app = routes.map(route => {
@@ -243,9 +271,9 @@ export default {
     async handleExpend(row, event) {
       this.listLoading = true
       fetchChild(row.id).then(response => {
-        // console.log(event)
+        // // console.log(event)
         row.parentId = -1
-        if (response.data.length === 0 || !response.data.list) {
+        if (response.data.length === 0) {
           return
         }
         var idx = 0
@@ -255,8 +283,8 @@ export default {
             break
           }
         }
-        response.data.list.unshift(idx, 0)
-        Array.prototype.splice.apply(this.list, response.data.list)
+        response.data.unshift(idx, 0)
+        Array.prototype.splice.apply(this.list, response.data)
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -303,8 +331,28 @@ export default {
         type: 'warning'
       })
         .then(async() => {
+          // console.log($index, row)
           await deleteCate(row.id)
-          this.list.splice($index, 1)
+          if (row.parentId && row.parentId > 0) {
+            for (let index = 0; index < this.list.length; index++) {
+              if (this.list[index].id === row.parentId) {
+                if (!this.list[index].children) {
+                  return
+                }
+                const cld = this.list[index].children
+                for (let idx = 0; idx < cld.length; idx++) {
+                  if (cld[idx].id === row.id) {
+                    cld.splice(idx, 1)
+                    break
+                  }
+                }
+                break
+              }
+            }
+          } else {
+            this.list.splice($index, 1)
+          }
+
           this.$message({
             type: 'success',
             message: 'Delete succed!'
@@ -326,10 +374,28 @@ export default {
         }
       } else {
         const { data } = await addCate(this.cate)
-        this.cate.id = data.id
-        this.list.push(this.cate)
-        this.total += 1
+        // // console.log(data)
+        this.cate = data
+        if (this.cate.parentId && this.cate.parentId > 0) {
+          for (let index = 0; index < this.list.length; index++) {
+            if (this.list[index].id === this.cate.parentId) {
+              if (!this.list[index].children) {
+                this.list[index].children = []
+              }
+              this.list[index].children.push(this.cate)
+              break
+            }
+          }
+        } else {
+          this.cate.id = data.id
+          this.list.push(this.cate)
+          this.total += 1
+        }
       }
+
+      this.list.sort(function(a, b) {
+        return b.orderNo - a.orderNo
+      })
 
       const { remark, code, name } = this.cate
       this.dialogVisible = false
@@ -337,9 +403,9 @@ export default {
         title: 'Success',
         dangerouslyUseHTMLString: true,
         message: `
-            <div>Cate Code: ${code}</div>
-            <div>Cate Name: ${name}</div>
-            <div>Remark: ${remark}</div>
+            <div>栏目编码: ${code}</div>
+            <div>栏目名称: ${name}</div>
+            <div>备注: ${remark}</div>
           `,
         type: 'success'
       })
