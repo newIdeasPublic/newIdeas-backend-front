@@ -45,8 +45,10 @@ module.exports = {
         }
       }
     },
-    // proxy: `http://xslgy.zxl78585.com/`,
+    // 本地运行 验证码不显：
+    // proxy: `http://admin.xslgy.com/`,
     // after: require('./mock/mock-server.js')
+
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {

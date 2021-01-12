@@ -5,6 +5,7 @@ export default {
     guide: '引导页',
     permission: '权限测试页',
     cmscategory: '栏目管理',
+    administratorAccount:'帐号列表',
     cmscontent: '内容管理',
     cmscontentcreate: '新增内容',
     cmscontentedit: '编辑内容',
@@ -105,6 +106,13 @@ export default {
     delete: '删除',
     confirm: '确定',
     cancel: '取消'
+  },
+  administratorAccount: {
+    edit: '编辑',
+    delete: '删除',
+    confirm: '确定',
+    cancel: '取消',
+    addUser:'新增用户'
   },
   cmscontent: {
     add: '新增内容',
