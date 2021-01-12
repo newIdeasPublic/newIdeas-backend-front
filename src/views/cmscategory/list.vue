@@ -4,7 +4,7 @@
       {{ $t('cmscategory.addCategory') }}
     </el-button>
 
-    <el-table :data="list" style="width: 100%;margin-top:30px;" :row-style="rowStyle" row-key="id" lazy border :load="loadChild" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+    <el-table :data="list" style="width: 100%;margin-top:30px;" :expand-row-keys="expandKeys" :default-sort="{prop: 'orderNo', order: 'ascending'}" :row-style="rowStyle" row-key="id" lazy border :load="loadChild" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.id }}
@@ -29,6 +29,11 @@
       <el-table-column align="header-center" label="备注">
         <template slot-scope="scope">
           {{ scope.row.remark }}
+        </template>
+      </el-table-column>
+      <el-table-column align="header-center" label="序号" sortable prop="orderNo">
+        <template slot-scope="scope">
+          {{ scope.row.orderNo }}
         </template>
       </el-table-column>
       <el-table-column align="header-center" label="显示">
@@ -142,6 +147,7 @@ export default {
       },
       tableKey: 0,
       list: [],
+      expandKeys: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -177,9 +183,9 @@ export default {
       fetchChild(0).then(response => {
         // console.log(response.data.length)
         this.list = response.data
-        for (var i = 0; i < this.list.length; i++) {
+        /* for (var i = 0; i < this.list.length; i++) {
           this.list[i].hasChildren = true
-        }
+        } */
         this.total = response.data.length
 
         // Just to simulate the time of the request
@@ -194,10 +200,11 @@ export default {
       this.listLoading = true
       fetchChild(tree.id).then(response => {
         // console.log(response.data.length)
-        tree.children = response.data
-        treeNode.children = response.data
-        resolve(response.data)
-
+        const list = this.getCloneOrderChild(response.data)
+        tree.children = list
+        treeNode.children = list
+        resolve(list)
+        // console.log(this.expandKeys)
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -361,15 +368,57 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
+    getCloneOrderChild(data) {
+      // console.log(data)
+      const list = JSON.parse(JSON.stringify(data))
+      list.sort(function(a, b) {
+        return a.orderNo - b.orderNo
+      })
+      // console.log(list)
+      return list
+    },
+    updateChild(cld) {
+      const list = this.getCloneOrderChild(cld)
+      for (let idx = cld.length - 1; idx >= 0; idx--) {
+        cld.splice(idx, 1)
+      }
+      for (let idx = 0; idx < list.length; idx++) {
+        cld.push(list[idx])
+      }
+    },
     async confirmCate() {
       const isEdit = this.dialogType === 'edit'
 
       if (isEdit) {
         await updateCate(this.cate)
-        for (let index = 0; index < this.list.length; index++) {
-          if (this.list[index].id === this.cate.id) {
-            this.list.splice(index, 1, Object.assign({}, this.cate))
-            break
+
+        if (this.cate.parentId && this.cate.parentId > 0) {
+          for (let index = 0; index < this.list.length; index++) {
+            if (this.list[index].id === this.cate.parentId) {
+              if (!this.list[index].children) {
+                return
+              }
+              const cld = this.list[index].children
+              for (let idx = 0; idx < cld.length; idx++) {
+                if (cld[idx].id === this.cate.id) {
+                  cld.splice(idx, 1, Object.assign({}, this.cate))
+                  break
+                }
+              }
+              this.updateChild(this.list[index].children)
+              // this.list[index].children = []
+              // this.list[index].children = this.getCloneOrderChild(cld)
+              break
+            }
+          }
+        } else {
+          for (let index = 0; index < this.list.length; index++) {
+            if (this.list[index].id === this.cate.id) {
+              const cld = this.list[index].children
+              this.list.splice(index, 1, Object.assign({}, this.cate))
+              this.list[index].children = cld
+              break
+            }
           }
         }
       } else {
@@ -382,7 +431,17 @@ export default {
               if (!this.list[index].children) {
                 this.list[index].children = []
               }
+              this.list[index].hasChildren = true
               this.list[index].children.push(this.cate)
+              // this.expandKeys = []
+              if (!this.expandKeys[this.cate.parentId + '']) {
+                this.expandKeys.push(this.cate.parentId + '')
+              }
+
+              this.updateChild(this.list[index].children)
+              // this.list[index].children = []
+              // this.list[index].children = this.getCloneOrderChild(this.list[index].children)
+              // console.log(this.expandKeys)
               break
             }
           }
@@ -392,10 +451,7 @@ export default {
           this.total += 1
         }
       }
-
-      this.list.sort(function(a, b) {
-        return b.orderNo - a.orderNo
-      })
+      // this.$forceUpdate() // 强制刷新（重新渲染）此代码无效
 
       const { remark, code, name } = this.cate
       this.dialogVisible = false
