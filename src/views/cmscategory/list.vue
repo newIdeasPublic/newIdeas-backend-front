@@ -3,9 +3,9 @@
     <el-button type="primary" @click="handleAddCate">
       {{ $t('cmscategory.addCategory') }}
     </el-button>
-
-    <el-table :data="list" style="width: 100%;margin-top:30px;" :expand-row-keys="expandKeys" :default-sort="{prop: 'orderNo', order: 'ascending'}" :row-style="rowStyle" row-key="id" lazy border :load="loadChild" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-      <el-table-column align="center" label="ID" width="80">
+    <!-- // :default-sort="{prop: 'orderNo', order: 'ascending'}" -->
+    <el-table :data="list" style="width: 100%;margin-top:30px;" :expand-row-keys="expandKeys" :row-style="rowStyle" row-key="id" lazy border :load="loadChild" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+      <el-table-column align="center" label="ID" width="120">
         <template slot-scope="scope">
           {{ scope.row.id }}
           <!-- <template v-if="scope.row.parentId === 0">
@@ -31,7 +31,7 @@
           {{ scope.row.remark }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="序号" sortable prop="orderNo">
+      <el-table-column align="header-center" label="序号"> // sortable prop="orderNo"
         <template slot-scope="scope">
           {{ scope.row.orderNo }}
         </template>
@@ -186,7 +186,10 @@ export default {
         /* for (var i = 0; i < this.list.length; i++) {
           this.list[i].hasChildren = true
         } */
-        this.total = response.data.length
+        this.list.sort(function(a, b) {
+          return a.orderNo - b.orderNo
+        })
+        this.total = this.list.length
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -357,12 +360,19 @@ export default {
               }
             }
           } else {
-            this.list.splice($index, 1)
+            // console.log(this.list)
+            // this.list.splice($index, 1)
+            for (let index = 0; index < this.list.length; index++) {
+              if (this.list[index].id === row.id) {
+                this.list.splice(index, 1)
+                break
+              }
+            }
           }
 
           this.$message({
             type: 'success',
-            message: 'Delete succed!'
+            message: '删除成功!'
           })
           this.total -= 1
         })
@@ -420,6 +430,9 @@ export default {
               break
             }
           }
+          this.list.sort(function(a, b) {
+            return a.orderNo - b.orderNo
+          })
         }
       } else {
         const { data } = await addCate(this.cate)
@@ -449,19 +462,23 @@ export default {
           this.cate.id = data.id
           this.list.push(this.cate)
           this.total += 1
+          this.list.sort(function(a, b) {
+            return a.orderNo - b.orderNo
+          })
         }
       }
       // this.$forceUpdate() // 强制刷新（重新渲染）此代码无效
 
-      const { remark, code, name } = this.cate
+      const { code, name } = this.cate
       this.dialogVisible = false
+      let dTitle = '添加'
+      if (isEdit) { dTitle = '修改' }
       this.$notify({
-        title: 'Success',
+        title: dTitle + '成功',
         dangerouslyUseHTMLString: true,
         message: `
             <div>栏目编码: ${code}</div>
             <div>栏目名称: ${name}</div>
-            <div>备注: ${remark}</div>
           `,
         type: 'success'
       })
