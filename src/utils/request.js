@@ -47,13 +47,18 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
-      let msg = res.message || 'Unkown Error'
-      if (res.code === 500) {
-        msg = '服务器后台错误，请联系管理员！'
+      let msg = 'Unkown Error'
+      if (res.message) {
+        msg = res.message
+      } else {
+        if (res.code === 500) {
+          msg = '服务器后台错误，请联系管理员！'
+        }
+        if (res.code === 502) {
+          msg = '服务器后台错误，请稍后刷新重试！'
+        }
       }
-      if (res.code === 502) {
-        msg = '服务器后台错误，请稍后刷新重试！'
-      }
+
       Message({
         message: msg,
         type: 'error',
