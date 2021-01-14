@@ -37,7 +37,7 @@ export function deleteCate(id) {
   })
 }
 
-export function get(id) {
+export function getCate(id) {
   return request({
     url: `/api/cmscategory/get/${id}`,
     method: 'get'
