@@ -6,19 +6,16 @@
     </el-button>
 
     <el-table :data="list" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="内容ID" width="220">
+      <el-table-column align="center" label="内容ID" width="120">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="内容标题" width="220">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="简介" width="220">
-        <template slot-scope="scope">
-          {{ scope.row.shortContent }}
+      <el-table-column min-width="200px" label="内容标题">
+        <template slot-scope="{row}">
+          <router-link :to="'/cmscontent/edit/'+row.id" class="link-type">
+            <span>{{ row.title }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column align="header-center" label="日期">
@@ -26,16 +23,20 @@
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="状态">
-        <template slot-scope="scope">
-          {{ scope.row.status }}
+      <el-table-column class-name="status-col" label="状态" width="110">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusFilter">
+            {{ statusText(row.status) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">
-            {{ $t('cmscontent.edit') }}
-          </el-button>
+          <router-link :to="'/cmscontent/edit/'+scope.row.id">
+            <el-button type="primary" size="small" icon="el-icon-edit">
+              {{ $t('cmscontent.edit') }}
+            </el-button>
+          </router-link>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
             {{ $t('cmscontent.delete') }}
           </el-button>
@@ -84,11 +85,25 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 const defaultContent = {
   code: '',
   name: '',
-  description: ''
+  description: '',
+  status: 0 // 状态：0草稿，1已发布，2已撤销
 }
 
 export default {
   components: { Pagination },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        '0': 'info',
+        '1': 'success',
+        '2': 'danger'
+      }
+      if (status !== undefined) {
+        return statusMap[status]
+      }
+      return 'warning'
+    }
+  },
   data() {
     return {
       cate: Object.assign({}, defaultContent),
@@ -134,12 +149,19 @@ export default {
       const routes = this.generateRoutes(res.data)
       this.routes = this.i18n(routes)
     }, */
+    statusText(status) {
+      const statusMap = {
+        '0': '草稿',
+        '1': '已发布',
+        '2': '已撤销'
+      }
+      if (status !== undefined) {
+        return statusMap[status]
+      }
+      return '未知'
+    },
     async getList() {
       this.listLoading = true
-      this.listQuery.code = this.$route.params.code
-      this.categoryId = this.$route.params.id
-      console.log(this.listQuery.code)
-      console.log(this.categoryId)
       fetchList(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.totalCount

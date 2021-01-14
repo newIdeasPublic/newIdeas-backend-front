@@ -31,7 +31,7 @@ export function deleteContent(id) {
   })
 }
 
-export function get(id) {
+export function getContent(id) {
   return request({
     url: `/api/cmscontent/get/${id}`,
     method: 'get'

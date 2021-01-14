@@ -241,7 +241,7 @@ export const asyncRoutes = [
         path: 'edit/:id(\\d+)',
         component: () => import('@/views/cmscontent/edit'),
         name: 'cmscontentEdit',
-        meta: { title: 'cmscontentEdit', noCache: true, activeMenu: '/cmscontent/list' },
+        meta: { title: 'cmscontentedit', noCache: true, activeMenu: '/cmscontent/list' },
         hidden: true
       },
       {
