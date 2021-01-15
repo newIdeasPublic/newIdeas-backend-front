@@ -1,9 +1,51 @@
 <template>
   <div class="app-container">
-    当前栏目：{{ $route.params.name }}
-    <el-button type="primary" @click="handleAddContent">
-      {{ $t('cmscontent.add') }}
-    </el-button>
+    <div class="createPost-container">
+      <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
+        <el-row>
+          <el-col :span="6">
+            <el-form-item style="" prop="title">
+              <el-input v-model="postForm.title" :maxlength="100" placeholder="标题" name="name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-select v-model="categoryId1" placeholder="一级栏目" @change="cateOptionsChange($event, 1)">
+                <el-option v-for="item in cateOptions1" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-select v-model="categoryId2" :remote-method="getRemoteCateList" placeholder="二级栏目" @change="cateOptionsChange($event, 2)">
+                <el-option v-for="item in cateOptions2" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-form-item>
+              <el-input v-model="postForm.author" placeholder="作者" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item>
+              <el-date-picker
+                v-model="displayTime"
+                type="monthrange"
+                range-separator="至"
+                start-placeholder="开始月份"
+                end-placeholder="结束月份"
+                unlink-panels
+                :picker-options="pickerOptions"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(1)">搜索</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
 
     <el-table :data="list" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="内容ID" width="120">
@@ -81,6 +123,15 @@ import { deepClone } from '@/utils'
 import { fetchList, addContent, deleteContent, updateContent } from '@/api/cmscontent'
 import i18n from '@/lang'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { fetchChild } from '@/api/cmscategory'
+
+const defaultForm = {
+  status: 0, // 状态：0草稿，1已发布，2已撤销
+  title: '', // 文章题目
+  display_time: undefined, // 前台展示时间
+  importance: 0,
+  categoryId: 0
+}
 
 const defaultContent = {
   code: '',
@@ -105,8 +156,57 @@ export default {
     }
   },
   data() {
+    const validateRequire = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({
+          message: rule.field + '为必传项',
+          type: 'error'
+        })
+        callback(new Error(rule.field + '为必传项'))
+      } else {
+        callback()
+      }
+    }
     return {
+      pickerOptions: {
+        shortcuts: [{
+          text: '本月',
+          onClick(picker) {
+            picker.$emit('pick', [new Date(), new Date()])
+          }
+        }, {
+          text: '今年至今',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date(new Date().getFullYear(), 0)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近六个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setMonth(start.getMonth() - 6)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       cate: Object.assign({}, defaultContent),
+      postForm: Object.assign({}, defaultForm),
+      loading: false,
+      userListOptions: [],
+      cateOptions1: [],
+      cateOptions2: [],
+      categoryId1: null,
+      categoryId2: null,
+      cateInfo: null,
+      rules: {
+        // imgUrl: [{ validator: validateRequire }],
+        title: [{ validator: validateRequire }],
+        shortContent: [{ validator: validateRequire }],
+        content: [{ validator: validateRequire }]
+        // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+      },
       routes: [],
       dialogVisible: false,
       dialogType: 'new',
@@ -129,7 +229,8 @@ export default {
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false
+      showReviewer: false,
+      displayTime: ''
     }
   },
   computed: {
@@ -140,6 +241,7 @@ export default {
   created() {
     // Mock: get all routes and cates list from server
     // this.getRoutes()
+    this.getRemoteCateList(0)
     this.getList()
   },
   methods: {
@@ -149,6 +251,27 @@ export default {
       const routes = this.generateRoutes(res.data)
       this.routes = this.i18n(routes)
     }, */
+    getRemoteCateList(pid) {
+      fetchChild(pid).then(response => {
+        if (!response.data) return
+        console.log('getRemoteCateList', response.data)
+        if (pid === 0) {
+          this.cateOptions1 = response.data
+        } else {
+          this.cateOptions2 = response.data
+        }
+      })
+    },
+    cateOptionsChange(val, flag) {
+      console.log(val, flag, this.categoryId1, this.categoryId2)
+      if (flag === 1) {
+        this.categoryId2 = null
+        this.getRemoteCateList(val)
+      } else {
+        console.log(this.categoryId2)
+        this.postForm.categoryId = this.categoryId2
+      }
+    },
     statusText(status) {
       const statusMap = {
         '0': '草稿',
@@ -170,6 +293,25 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
+      })
+    },
+    async submitForm(flag) {
+      this.loading = true
+      const query = Object.assign(this.listQuery, this.postForm)
+      console.log('query', query)
+      fetchList(query).then(response => {
+        this.list = response.data.list
+        this.total = response.data.totalCount
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+          this.loading = false
+        }, 1.5 * 1000)
+      }).catch(err => {
+        console.error(err)
+        this.listLoading = false
+        this.loading = false
       })
     },
     i18n(routes) {
