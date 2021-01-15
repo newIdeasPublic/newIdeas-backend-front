@@ -16,12 +16,12 @@
           </template> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="栏目编码" width="150">
+      <el-table-column align="center" label="栏目编码">
         <template slot-scope="scope">
           {{ scope.row.code }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="栏目名称" width="200">
+      <el-table-column align="center" label="栏目名称">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -31,12 +31,12 @@
           {{ scope.row.remark }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="序号"> // sortable prop="orderNo"
+      <el-table-column align="header-center" label="序号" width="80"> // sortable prop="orderNo"
         <template slot-scope="scope">
           {{ scope.row.orderNo }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="显示">
+      <el-table-column align="header-center" label="显示" width="80">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.isShow"
@@ -48,8 +48,13 @@
           />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+      <el-table-column align="right" label="操作" width="220">
         <template slot-scope="scope">
+          <template v-if="scope.row.parentId === 0">
+            <el-button type="primary" size="small" @click="handleAddCate(scope.row)">
+              新增
+            </el-button>
+          </template>
           <el-button type="primary" size="small" @click="handleEdit(scope)">
             {{ $t('cmscategory.edit') }}
           </el-button>
@@ -58,11 +63,6 @@
               管理内容
             </el-button>
           </router-link> -->
-          <template v-if="scope.row.parentId === 0">
-            <el-button type="primary" @click="handleAddCate(scope.row)">
-              {{ $t('cmscategory.addCategory') }}
-            </el-button>
-          </template>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
             {{ $t('cmscategory.delete') }}
           </el-button>
