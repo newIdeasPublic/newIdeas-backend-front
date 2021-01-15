@@ -190,22 +190,23 @@ export default {
         console.log(response.data)
         this.postForm = response.data
 
-        // just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.shortContent += `   Article Id:${this.postForm.id}`
+        getCate(this.postForm.categoryId).then(response => {
+          console.log('getCate', this.postForm.categoryId, response, response.data)
+          if (response.data) {
+            this.cateInfo = response.data
+            this.categoryId1 = this.cateInfo.parentId
+            this.getRemoteCateList(this.categoryId1)
+            this.categoryId2 = this.postForm.categoryId
+          }
+        }).catch(err => {
+          console.log(err)
+        })
 
         // set tagsview title
         this.setTagsViewTitle()
 
         // set page title
         this.setPageTitle()
-      }).catch(err => {
-        console.log(err)
-      })
-
-      getCate(this.postForm.categoryId).then(response => {
-        console.log(response.data)
-        this.cateInfo = response.data
       }).catch(err => {
         console.log(err)
       })
@@ -234,6 +235,7 @@ export default {
         }
       })
       if (this.isEdit) {
+        this.postForm.status = 1
         const { data } = await updateContent(this.postForm)
         console.log('data====', data)
         this.postForm = data
