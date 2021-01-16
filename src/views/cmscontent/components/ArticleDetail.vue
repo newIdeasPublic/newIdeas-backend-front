@@ -2,9 +2,9 @@
   <div class="createPost-container">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
-        <CommentDropdown v-model="postForm.comment_disabled" />
+        <!-- <CommentDropdown v-model="postForm.comment_disabled" />
         <PlatformDropdown v-model="postForm.platforms" />
-        <SourceUrlDropdown v-model="postForm.source_uri" />
+        <SourceUrlDropdown v-model="postForm.source_uri" /> -->
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(1)">
           {{ $t('cmscontent.publish') }}
         </el-button>
@@ -78,7 +78,7 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 import { searchUser } from '@/api/remote-search'
 import { getCate, fetchChild } from '@/api/cmscategory'
 // import Warning from './Warning'
-import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
+// import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { addContent, updateContent, getContent } from '@/api/cmscontent'
 
 const defaultForm = {
@@ -98,7 +98,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Upload, Sticky }, // , CommentDropdown, PlatformDropdown, SourceUrlDropdown
   props: {
     isEdit: {
       type: Boolean,
@@ -194,9 +194,13 @@ export default {
           console.log('getCate', this.postForm.categoryId, response, response.data)
           if (response.data) {
             this.cateInfo = response.data
-            this.categoryId1 = this.cateInfo.parentId
-            this.getRemoteCateList(this.categoryId1)
-            this.categoryId2 = this.postForm.categoryId
+            if (this.cateInfo.parentId === 0) {
+              this.categoryId1 = this.cateInfo.id
+            } else {
+              this.categoryId1 = this.cateInfo.parentId
+              this.getRemoteCateList(this.categoryId1)
+              this.categoryId2 = this.postForm.categoryId
+            }
           }
         }).catch(err => {
           console.log(err)
@@ -298,6 +302,7 @@ export default {
       console.log(val, flag, this.categoryId1, this.categoryId2)
       if (flag === 1) {
         this.categoryId2 = null
+        this.postForm.categoryId = val
         this.getRemoteCateList(val)
       } else {
         console.log(this.categoryId2)
