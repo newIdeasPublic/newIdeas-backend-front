@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="createPost-container">
-      <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
+      <el-form ref="postForm" :model="postForm" class="form-container"><!--  :rules="rules" -->
         <el-row>
           <el-col :span="6">
             <el-form-item style="" prop="title">
               <el-input v-model="postForm.title" :maxlength="100" placeholder="标题" name="name" />
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <!-- <el-col :span="3">
             <el-form-item>
               <el-select v-model="categoryId1" placeholder="一级栏目" @change="cateOptionsChange($event, 1)">
                 <el-option v-for="item in cateOptions1" :key="item.id" :label="item.name" :value="item.id" />
@@ -39,10 +39,11 @@
                 :picker-options="pickerOptions"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="2">
             <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(1)">搜索</el-button>
           </el-col>
+          <el-col :span="16" />
         </el-row>
       </el-form>
     </div>
@@ -157,6 +158,7 @@ export default {
   },
   data() {
     const validateRequire = (rule, value, callback) => {
+      console.log('rule', rule)
       if (value === '') {
         this.$message({
           message: rule.field + '为必传项',
@@ -202,9 +204,9 @@ export default {
       cateInfo: null,
       rules: {
         // imgUrl: [{ validator: validateRequire }],
-        title: [{ validator: validateRequire }],
-        shortContent: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }]
+        title: [{ validator: validateRequire }]
+        // shortContent: [{ validator: validateRequire }],
+        // content: [{ validator: validateRequire }]
         // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       routes: [],
@@ -241,7 +243,7 @@ export default {
   created() {
     // Mock: get all routes and cates list from server
     // this.getRoutes()
-    this.getRemoteCateList(0)
+    // this.getRemoteCateList(0)
     this.getList()
   },
   methods: {
@@ -396,9 +398,12 @@ export default {
           this.list.splice($index, 1)
           this.$message({
             type: 'success',
-            message: 'Delete succed!'
+            message: '删除成功!'
           })
           this.total -= 1
+          if (this.list.length < 8 && this.total > this.list.length) {
+            this.getList()
+          }
         })
         .catch(err => { console.error(err) })
     },

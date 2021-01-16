@@ -36,9 +36,9 @@
           </el-col>
         </el-form-item>
 
-        <el-form-item :label="$t('cmscontent.publishTime')+':'" class="postInfo-container-item">
+        <!-- <el-form-item :label="$t('cmscontent.publishTime')+':'" class="postInfo-container-item">
           <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" />
-        </el-form-item>
+        </el-form-item> -->
 
         <!-- <el-form-item label-width="60px" label="Importance:" class="postInfo-container-item">
           <el-rate
