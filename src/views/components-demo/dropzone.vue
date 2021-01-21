@@ -5,7 +5,7 @@
       {{ $t('components.dropzoneTips') }}
     </aside>
     <div class="editor-container">
-      <dropzone id="myVueDropzone" url="https://httpbin.org/post" @dropzone-removedFile="dropzoneR" @dropzone-success="dropzoneS" />
+      <dropzone id="myVueDropzone" url="/api/common/upload" @dropzone-removedFile="dropzoneR" @dropzone-success="dropzoneS" />
     </div>
   </div>
 </template>
