@@ -253,6 +253,38 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    path: '/society',
+    component: Layout,
+    redirect: '/society/list',
+    name: 'society',
+    meta: {
+      title: 'society',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'create',
+        component: () => import('@/views/society/create'),
+        name: 'societycreate',
+        meta: { title: 'societycreate', icon: 'edit' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/society/edit'),
+        name: 'societyEdit',
+        meta: { title: 'societyEdit', noCache: true, activeMenu: '/society/list' },
+        hidden: true
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/society/list'),
+        name: 'societylist',
+        meta: { title: 'societylist', icon: 'list' }
+      }
+    ]
+  },
+
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
