@@ -472,5 +472,6 @@ export default {
   .cmscontent-tree {
     margin-bottom: 30px;
   }
+  .el-button {margin-right:10px;}
 }
 </style>
