@@ -11,17 +11,38 @@
       </sticky>
 
       <div class="createPost-main-container">
-        <el-form-item label-width="180px" label="组织名称:" class="postInfo-container-item">
-          <el-input v-model="postForm.orgName" placeholder="组织名称" />
+        <el-form-item label-width="180px" label="组织名称:" class="postInfo-container-item" :required="true" prop="orgName">
+          <el-input v-model="postForm.orgName" placeholder="必填" />
         </el-form-item>
         <el-form-item label-width="180px" label="组织分类:" class="postInfo-container-item">
-          <el-input v-model="postForm.category" placeholder="组织分类" />
+          <el-select v-model="postForm.category" placeholder="请选择">
+            <el-option
+              v-for="item in categoryOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label-width="180px" label="组织所在城市:" class="postInfo-container-item">
-          <el-input v-model="postForm.city" placeholder="组织所在城市" />
+          <el-select v-model="postForm.city" placeholder="请选择" @change="cityOptionsChange($event, 1)">
+            <el-option
+              v-for="item in cityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label-width="180px" label="组织所在社区:" class="postInfo-container-item">
-          <el-input v-model="postForm.community" placeholder="组织所在社区" />
+          <el-select v-model="postForm.community" placeholder="请选择">
+            <el-option
+              v-for="item in communityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label-width="180px" label="法人:" class="postInfo-container-item">
           <el-input v-model="postForm.juridicalPerson" placeholder="法人" />
@@ -29,14 +50,14 @@
         <el-form-item label-width="180px" label="法人介绍:" class="postInfo-container-item">
           <el-input v-model="postForm.juridicalPersonIntroduction" placeholder="法人介绍" />
         </el-form-item>
-        <el-form-item label-width="180px" label="联系人:" class="postInfo-container-item">
-          <el-input v-model="postForm.linkman" placeholder="联系人" />
+        <el-form-item label-width="180px" label="联系人姓名:" class="postInfo-container-item" :required="true" prop="linkman">
+          <el-input v-model="postForm.linkman" placeholder="必填" />
         </el-form-item>
         <el-form-item label-width="180px" label="联系人介绍:" class="postInfo-container-item">
           <el-input v-model="postForm.linkmanIntroduction" placeholder="联系人介绍" />
         </el-form-item>
-        <el-form-item label-width="180px" label="联系人电话:" class="postInfo-container-item">
-          <el-input v-model="postForm.linkmanMobile" placeholder="联系人电话" />
+        <el-form-item label-width="180px" label="联系人电话:" class="postInfo-container-item" :required="true" prop="linkmanMobile">
+          <el-input v-model="postForm.linkmanMobile" placeholder="必填" />
         </el-form-item>
         <el-form-item label-width="180px" label="联系电话:" class="postInfo-container-item">
           <el-input v-model="postForm.mobile" placeholder="联系电话" />
@@ -44,20 +65,30 @@
         <el-form-item label-width="180px" label="组织地址:" class="postInfo-container-item">
           <el-input v-model="postForm.orgAddress" placeholder="组织地址" />
         </el-form-item>
-        <el-form-item label-width="180px" label="组织资质证书地址:" class="postInfo-container-item">
-          <el-input v-model="postForm.orgCertificationUrl" placeholder="组织资质证书地址" />
+        <el-form-item label-width="180px" label="组织资质证书:" class="postInfo-container-item" :required="true" prop="orgCertificationUrl">
+          <el-input v-model="postForm.orgCertificationUrl" placeholder="必填" />
         </el-form-item>
         <el-form-item label-width="180px" label="组织介绍:" class="postInfo-container-item">
           <el-input v-model="postForm.orgIntroduction" placeholder="组织介绍" />
         </el-form-item>
-        <el-form-item label-width="180px" label="组织Logo地址:" class="postInfo-container-item">
-          <el-input v-model="postForm.orgLogoUrl" placeholder="组织Logo地址" />
+        <el-form-item label-width="180px" label="组织Logo:" class="postInfo-container-item">
+          <el-input v-model="postForm.orgLogoUrl" placeholder="组织Logo" />
         </el-form-item>
         <el-form-item label-width="180px" label="组织邮箱:" class="postInfo-container-item">
           <el-input v-model="postForm.orgMail" placeholder="组织邮箱" />
         </el-form-item>
         <el-form-item label-width="180px" label="备注:" class="postInfo-container-item">
           <el-input v-model="postForm.remark" placeholder="备注" />
+        </el-form-item>
+        <el-form-item label-width="180px" label="状态:" class="postInfo-container-item">
+          <el-select v-model="postForm.status" placeholder="请选择">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <!-- <el-form-item label-width="80px" label="所属栏目:" class="postInfo-container-item">
@@ -104,6 +135,7 @@ const defaultForm = {
   platforms: ['a-platform'],
   comment_disabled: false,
   category: '', // 组织分类
+  categoryId: '', // 组织分类编号
   city: '', // 组织所在城市
   community: '', // 组织所在社区
   juridicalPerson: '', // 法人
@@ -118,6 +150,7 @@ const defaultForm = {
   orgLogoUrl: '', // 组织Logo地址
   orgMail: '', // 组织邮箱
   orgName: '', // 组织名称
+  status: 0, // 审核状态：0=待审核，1=已审核，2=审核未通过
   remark: '' // 备注
 }
 
@@ -131,17 +164,6 @@ export default {
     }
   },
   data() {
-    const validateRequire = (rule, value, callback) => {
-      if (value === '') {
-        this.$message({
-          message: rule.field + '为必传项',
-          type: 'error'
-        })
-        callback(new Error(rule.field + '为必传项'))
-      } else {
-        callback()
-      }
-    }
     /* const validateSourceUri = (rule, value, callback) => {
       if (value) {
         if (validURL(value)) {
@@ -168,12 +190,291 @@ export default {
       cateInfo: null,
       rules: {
         // imgUrl: [{ validator: validateRequire }],
-        orgName: [{ validator: validateRequire }],
-        mobile: [{ validator: validateRequire }],
-        orgMail: [{ validator: validateRequire }]
+        orgName: [{ required: true, message: '请输入组织名称', trigger: 'blur' }],
+        linkman: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
+        linkmanMobile: [{ required: true, message: '请输入联系人电话', trigger: 'blur' }],
+        orgCertificationUrl: [{ required: true, message: '请上传组织资质证书', trigger: 'blur', type: 'url' }]
         // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      tempRoute: {}
+      tempRoute: {},
+      statusOptions: [ // 审核状态：0=待审核，1=已审核，2=审核未通过
+        {
+          value: 0,
+          label: '待审核'
+        }, {
+          value: 1,
+          label: '已审核'
+        }, {
+          value: 2,
+          label: '审核未通过'
+        }
+      ],
+      categoryOptions: [
+        {
+          value: '教育助学',
+          label: '教育助学'
+        },
+
+        {
+          value: '环保探究',
+          label: '环保探究'
+        },
+
+        {
+          value: '动物救助',
+          label: '动物救助'
+        },
+
+        {
+          value: '三农发展',
+          label: '三农发展'
+        },
+
+        {
+          value: '扶乡村贫',
+          label: '扶乡村贫'
+        },
+
+        {
+          value: '社区发展',
+          label: '社区发展'
+        },
+
+        {
+          value: '救灾救援',
+          label: '救灾救援'
+        },
+
+        {
+          value: '社区教育',
+          label: '社区教育'
+        },
+
+        {
+          value: '公共卫生',
+          label: '公共卫生'
+        },
+
+        {
+          value: '疾病预防',
+          label: '疾病预防'
+        },
+
+        {
+          value: '关爱老人',
+          label: '关爱老人'
+        },
+
+        {
+          value: '妇女儿童',
+          label: '妇女儿童'
+        },
+
+        {
+          value: '残障支持',
+          label: '残障支持'
+        },
+
+        {
+          value: '社会创新',
+          label: '社会创新'
+        },
+
+        {
+          value: '建设咨询',
+          label: '建设咨询'
+        },
+
+        {
+          value: '民族宗教',
+          label: '民族宗教'
+        },
+
+        {
+          value: '文化艺术',
+          label: '文化艺术'
+        },
+
+        {
+          value: '社工支持',
+          label: '社工支持'
+        },
+
+        {
+          value: '孵化培育',
+          label: '孵化培育'
+        },
+
+        {
+          value: '大病救助',
+          label: '大病救助'
+        },
+
+        {
+          value: '公共空间',
+          label: '公共空间'
+        },
+
+        {
+          value: '法律普及',
+          label: '法律普及'
+        },
+
+        {
+          value: '乡村振兴',
+          label: '乡村振兴'
+        },
+
+        {
+          value: '社工站点',
+          label: '社工站点'
+        }
+      ],
+      cityOptions: [
+        {
+          value: '银川市',
+          label: '银川市'
+        },
+
+        {
+          value: '吴忠市',
+          label: '吴忠市'
+        },
+
+        {
+          value: '石嘴山市',
+          label: '石嘴山市'
+        },
+
+        {
+          value: '固原市',
+          label: '固原市'
+        },
+
+        {
+          value: '中卫市',
+          label: '中卫市'
+        }
+      ],
+      communityOptions: [],
+      communityOptionsList:
+        {
+          '银川市': [
+            {
+              value: '西夏区',
+              label: '西夏区'
+            },
+
+            {
+              value: '兴庆区',
+              label: '兴庆区'
+            },
+
+            {
+              value: '金凤区',
+              label: '金凤区'
+            },
+
+            {
+              value: '贺兰县',
+              label: '贺兰县'
+            },
+
+            {
+              value: '永宁县',
+              label: '永宁县'
+            },
+
+            {
+              value: '滨河新区',
+              label: '滨河新区'
+            }
+          ],
+          '吴忠市': [
+            {
+              value: '利通区',
+              label: '利通区'
+            },
+
+            {
+              value: '红寺堡区',
+              label: '红寺堡区'
+            },
+
+            {
+              value: '青铜峡市',
+              label: '青铜峡市'
+            },
+
+            {
+              value: '同心县',
+              label: '同心县'
+            },
+
+            {
+              value: '盐池县',
+              label: '盐池县'
+            }
+          ],
+          '石嘴山市': [
+            {
+              value: '大武口区',
+              label: '大武口区'
+            },
+
+            {
+              value: '惠农区',
+              label: '惠农区'
+            },
+
+            {
+              value: '平罗县',
+              label: '平罗县'
+            }
+          ],
+          '固原市': [
+            {
+              value: '原州区',
+              label: '原州区'
+            },
+
+            {
+              value: '西吉县',
+              label: '西吉县'
+            },
+
+            {
+              value: '隆德县',
+              label: '隆德县'
+            },
+
+            {
+              value: '泾源县',
+              label: '泾源县'
+            },
+
+            {
+              value: '彭阳县',
+              label: '彭阳县'
+            }
+          ],
+          '中卫市': [
+            {
+              value: '沙坡头区',
+              label: '沙坡头区'
+            },
+
+            {
+              value: '中宁县',
+              label: '中宁县'
+            },
+
+            {
+              value: '海原县',
+              label: '海原县'
+            }
+          ]
+        }
     }
   },
   computed: {
@@ -218,19 +519,26 @@ export default {
       document.title = `${title} - ${this.postForm.id}`
     },
     async submitForm() {
-      const notifyTitle = '保存'
-
-      console.log(this.postForm)
-      this.$refs.postForm.validate(valid => {
+      let notifyTitle = '保存'
+      let validateFlag = true
+      console.log('this.postForm', this.postForm)
+      this.$refs['postForm'].validate(valid => {
         if (valid) {
           this.loading = true
+          validateFlag = true
         } else {
+          validateFlag = false
           console.log('error submit!!')
           return false
         }
       })
+
+      if (!validateFlag) {
+        return false
+      }
+
       if (this.isEdit) {
-        this.postForm.status = 1
+        // this.postForm.status = 1
         const { data } = await updateSociety(this.postForm)
         console.log('data====', data)
         this.postForm = data
@@ -241,10 +549,11 @@ export default {
           duration: 2000
         })
       } else {
-        this.postForm.status = 1
+        // this.postForm.status = 1
+        notifyTitle = '添加'
         const { data } = await addSociety(this.postForm)
-        console.log('data====', data)
-        this.postForm = data
+        console.log('data', data)
+        // this.postForm = data
         this.$notify({
           title: notifyTitle + '成功',
           message: notifyTitle + '组织成功',
@@ -277,6 +586,20 @@ export default {
         if (!response.data.items) return
         this.userListOptions = response.data.items.map(v => v.name)
       })
+    },
+    cityOptionsChange(val, flag) {
+      // console.log('cityOptionsChange', val, flag, this.communityOptionsList)
+      this.postForm.community = ''
+      this.communityOptions = this.communityOptionsList[val]
+
+      /* if (flag === 1) {
+        this.categoryId2 = null
+        this.postForm.categoryId = val
+        this.getRemoteCateList(val)
+      } else {
+        console.log(this.categoryId2)
+        this.postForm.categoryId = this.categoryId2
+      } */
     }
   }
 }
