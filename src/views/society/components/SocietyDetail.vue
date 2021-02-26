@@ -66,13 +66,13 @@
           <el-input v-model="postForm.orgAddress" placeholder="组织地址" />
         </el-form-item>
         <el-form-item label-width="180px" label="组织资质证书:" class="postInfo-container-item" :required="true" prop="orgCertificationUrl">
-          <el-input v-model="postForm.orgCertificationUrl" placeholder="必填" />
+          <el-input v-model="postForm.orgCertificationUrl" placeholder="必填,只能是 JPG 格式,大小不能超过 2MB!" />
           <el-upload
             class="avatar-uploader"
             :action="certAction"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
+            :on-success="handleCertSuccess"
+            :before-upload="beforeCertUpload"
           >
             <img v-if="postForm.orgCertificationUrl" :src="postForm.orgCertificationUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -82,7 +82,17 @@
           <el-input v-model="postForm.orgIntroduction" placeholder="组织介绍" />
         </el-form-item>
         <el-form-item label-width="180px" label="组织Logo:" class="postInfo-container-item">
-          <el-input v-model="postForm.orgLogoUrl" placeholder="组织Logo" />
+          <el-input v-model="postForm.orgLogoUrl" placeholder="组织Logo,只能是 JPG 格式,大小不能超过 2MB!" />
+          <el-upload
+            class="avatar-uploader"
+            :action="certAction"
+            :show-file-list="false"
+            :on-success="handleLogoSuccess"
+            :before-upload="beforeLogoUpload"
+          >
+            <img v-if="postForm.orgLogoUrl" :src="postForm.orgLogoUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
         </el-form-item>
         <el-form-item label-width="180px" label="组织邮箱:" class="postInfo-container-item">
           <el-input v-model="postForm.orgMail" placeholder="组织邮箱" />
@@ -505,20 +515,35 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      // console.log('handleAvatarSuccess.res', res, file)
+    handleCertSuccess(res, file) {
+      // console.log('handleCertSuccess.res', res, file)
       // this.postForm.imageUrl = URL.createObjectURL(file.raw)
       this.postForm.orgCertificationUrl = res.data
     },
-    beforeAvatarUpload(file) {
+    beforeCertUpload(file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传组织资质证书图片只能是 JPG 格式!') // 只能是 JPG 格式,大小不能超过 2MB!
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('上传组织资质证书图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    handleLogoSuccess(res, file) {
+      this.postForm.orgLogoUrl = res.data
+    },
+    beforeLogoUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传组织Logo图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传组织Logo图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
     },
