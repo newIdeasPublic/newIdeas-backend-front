@@ -38,18 +38,13 @@ module.exports = {
     },
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://xslgy.zxl78585.com`,
+        target: `http://admin.xslgy.com`,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          ['^' + process.env.VUE_APP_BASE_API]: process.env.VUE_APP_BASE_API
         }
       }
     },
-    // 本地运行 验证码不显：
-    // proxy: `http://admin.xslgy.com/`,
-    // after: require('./mock/mock-server.js')
-
-    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

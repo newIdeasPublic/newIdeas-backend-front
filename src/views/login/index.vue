@@ -65,7 +65,7 @@
           />
         </el-col>
         <el-col :span="8">
-          <img id="imgIdentifyingCode" :src="captchaUrl" style="height:40px; width: 100px; cursor: pointer; vertical-align: -webkit-baseline-middle;" alt="点击更换" title="点击更换" @click="getIdentifyingCode(true)">
+          <img id="imgIdentifyingCode" :src="captchaUrl" style="height:40px; width: 100px; cursor: pointer; vertical-align: -webkit-baseline-middle;" alt="点击更换" title="点击更换" @click="getIdentifyingCode()">
         </el-col>
       </el-form-item>
 
@@ -133,8 +133,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111',
+        username: '',
+        password: '',
         code: '',
         mobile: '',
         uuid: Math.random()
@@ -166,8 +166,7 @@ export default {
     }
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
-    this.getIdentifyingCode(true)
+    this.getIdentifyingCode()
   },
 
   mounted() {
@@ -177,20 +176,10 @@ export default {
       this.$refs.password.focus()
     }
   },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
-  },
   methods: {
-    getIdentifyingCode(bRefresh) {
-      let identifyCodeSrc = process.env.VUE_APP_BASE_API + '/admin/login/captcha.jpg?uuid='
-      if (bRefresh) {
+    getIdentifyingCode() {
         this.loginForm.uuid = Math.random()
-        identifyCodeSrc = process.env.VUE_APP_BASE_API + '/admin/login/captcha.jpg?uuid=' + this.loginForm.uuid
-      }
-      // const objs = document.getElementById('imgIdentifyingCode')
-      // objs.src = identifyCodeSrc
-      this.captchaUrl = identifyCodeSrc
-      console.log(this.captchaUrl)
+        this.captchaUrl = process.env.VUE_APP_BASE_API + '/admin/login/captcha.jpg?uuid=' + this.loginForm.uuid
     },
     checkCapslock(e) {
       const { key } = e
@@ -234,24 +223,6 @@ export default {
         return acc
       }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>
