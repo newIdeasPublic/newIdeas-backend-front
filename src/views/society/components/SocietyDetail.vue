@@ -67,6 +67,16 @@
         </el-form-item>
         <el-form-item label-width="180px" label="组织资质证书:" class="postInfo-container-item" :required="true" prop="orgCertificationUrl">
           <el-input v-model="postForm.orgCertificationUrl" placeholder="必填" />
+          <el-upload
+            class="avatar-uploader"
+            :action="certAction"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="postForm.orgCertificationUrl" :src="postForm.orgCertificationUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
         </el-form-item>
         <el-form-item label-width="180px" label="组织介绍:" class="postInfo-container-item">
           <el-input v-model="postForm.orgIntroduction" placeholder="组织介绍" />
@@ -181,6 +191,7 @@ export default {
     } */
     return {
       postForm: Object.assign({}, defaultForm),
+      certAction: process.env.VUE_APP_BASE_API + '/api/common/upload',
       loading: false,
       userListOptions: [],
       cateOptions1: [],
@@ -192,7 +203,7 @@ export default {
         // imgUrl: [{ validator: validateRequire }],
         orgName: [{ required: true, message: '请输入组织名称', trigger: 'blur' }],
         linkman: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
-        linkmanMobile: [{ required: true, message: '请输入联系人电话', trigger: 'blur' }],
+        linkmanMobile: [{ required: true, message: '请输入联系人电话', trigger: 'blur' }, { pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/, message: '请输入合法手机号/电话号', trigger: 'blur' }],
         orgCertificationUrl: [{ required: true, message: '请上传组织资质证书', trigger: 'blur', type: 'url' }]
         // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
@@ -494,6 +505,23 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    handleAvatarSuccess(res, file) {
+      // console.log('handleAvatarSuccess.res', res, file)
+      // this.postForm.imageUrl = URL.createObjectURL(file.raw)
+      this.postForm.orgCertificationUrl = res.data
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
     fetchData(id) {
       console.log('this.isEdit', this.isEdit)
       getSociety(id).then(response => {
@@ -642,4 +670,29 @@ export default {
     border-bottom: 1px solid #bfcbd9;
   }
 }
+</style>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: auto;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+  }
+  .avatar {
+    width: auto;
+    height: 100px;
+    display: block;
+  }
 </style>
