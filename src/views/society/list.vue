@@ -74,7 +74,7 @@
           {{ scope.row.community }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="法人">
+      <!-- <el-table-column align="header-center" label="法人">
         <template slot-scope="scope">
           {{ scope.row.juridicalPerson }}
         </template>
@@ -83,13 +83,13 @@
         <template slot-scope="scope">
           {{ scope.row.juridicalPersonIntroduction }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="header-center" label="联系人">
         <template slot-scope="scope">
           {{ scope.row.linkman }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="联系人介绍">
+      <!-- <el-table-column align="header-center" label="联系人介绍">
         <template slot-scope="scope">
           {{ scope.row.linkmanIntroduction }}
         </template>
@@ -103,8 +103,8 @@
         <template slot-scope="scope">
           {{ scope.row.mobile }}
         </template>
-      </el-table-column>
-      <el-table-column align="header-center" label="组织地址">
+      </el-table-column> -->
+      <!-- <el-table-column align="header-center" label="组织地址">
         <template slot-scope="scope">
           {{ scope.row.orgAddress }}
         </template>
@@ -128,7 +128,7 @@
         <template slot-scope="scope">
           {{ scope.row.orgMail }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column align="header-center" label="备注">
         <template slot-scope="scope">
@@ -157,7 +157,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="pageQuery.page" :limit.sync="pageQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="pageQuery.page" :limit.sync="pageQuery.pageSize" @pagination="getList" />
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑':'新增社会组织'">
       <el-form :model="cate" label-width="80px" label-position="left">
@@ -216,9 +216,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        '0': 'info',
-        '1': 'success',
-        '2': 'danger'
+        0: 'info',
+        1: 'success',
+        2: 'danger'
       }
       if (status !== undefined) {
         return statusMap[status]
@@ -353,9 +353,9 @@ export default {
     },
     statusText(status) {
       const statusMap = {
-        '0': '草稿',
-        '1': '已发布',
-        '2': '已撤销'
+        0: '未审核',
+        1: '已审核',
+        2: '审核不通过'
       }
       if (status !== undefined) {
         return statusMap[status]
@@ -365,6 +365,7 @@ export default {
     async getList() {
       this.listLoading = true
       fetchList(this.pageQuery, this.listQuery).then(response => {
+        console.log('response.data', response.data)
         this.list = response.data.list
         this.total = response.data.totalCount
 
